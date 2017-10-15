@@ -3,11 +3,17 @@
     <h1>{{ msg }}</h1>
     <h3>Enter a guess between {{min}} and {{max}}</h3>
     <article class="inputs-buttons">
-      <input v-on:keyup.enter="submitGuess" class="guess-input" placeholder="enter your guess" v-model="userGuess"/>
-      <button v-on:click="submitGuess">Submit</button>
+      <input :min="min" :max="max" type="number" v-on:keyup.enter="submitGuess" class="guess-input" placeholder="enter your guess" v-model="userGuess" />
+      <button v-on:click="submitGuess" :disabled="!userGuess">Submit</button>
+      <button v-on:click="clearInput" :disabled="!userGuess">clear</button>
+      <button v-on:click="resetGame" :disabled="level <= 1">reset</button>
     </article>
-    <h3 v-if="guessResult" >{{ guessResult }}</h3>
-    <h3 v-if="lastGuess" >your last guess was: {{lastGuess}} </h3>
+    <input type="number" v-model="min" v-on:blur="getNewRandom" >{{min}}</input>
+    <input type="number" v-model="max" v-on:blur="getNewRandom" >{{max}}</input>
+    <h3 v-if="guessResult">{{ guessResult }}</h3>
+    <h3 v-if="lastGuess">your last guess was: {{lastGuess}} </h3>
+    <h3>{{rando}}</h3>
+    <h4>{{userGuess}}</h4>
   </section>
 </template>
 
@@ -22,8 +28,14 @@ export default {
       min: 0,
       max: 100,
       rando: 0,
-      lastGuess: undefined,
+      lastGuess: 0,
+      level: 1,
     };
+  },
+  computed: {
+    isResetDisabled() {
+      return this.$data.level === 1;
+    },
   },
   mounted: function getRandomOnMount() {
     this.getNewRandom();
@@ -31,6 +43,10 @@ export default {
   methods: {
     submitGuess: function submitGuess() {
       this.evaluateGuess(this.userGuess);
+      this.clearInput();
+    },
+
+    clearInput: function clearInput() {
       this.$data.userGuess = '';
     },
 
@@ -41,6 +57,9 @@ export default {
 
     evaluateGuess: function evaluateGuess(guess) {
       const intGuess = parseInt(guess, 10);
+      if (isNaN(intGuess)) {
+        this.badGuess('NaN');
+      }
       if (intGuess > this.rando) {
         this.badGuess('high');
       }
@@ -60,13 +79,26 @@ export default {
       if (feedback === 'low') {
         this.$data.guessResult = 'your guess was too low';
       }
+      if (feedback === 'NaN') {
+        this.$data.guessResult = 'you did not enter a number!';
+      }
     },
 
     gameWon: function gameWon() {
       this.$data.guessResult = 'You Guessed It';
       this.$data.min -= 10;
       this.$data.max += 10;
+      this.$data.level += 1;
       this.getNewRandom();
+    },
+
+    resetGame: function resetGame() {
+      console.log('reset clicky');
+      this.$data.lastGuess = 0;
+      this.$data.guessResult = '';
+      this.$data.min = 0;
+      this.$data.max = 100;
+      this.$data.level = 1;
     },
   },
 };
@@ -74,7 +106,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
+h1,
+h2 {
   font-weight: normal;
 }
 
