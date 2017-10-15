@@ -92,7 +92,6 @@ export default {
     },
 
     resetGame: function resetGame() {
-      console.log('reset clicky');
       this.$data.lastGuess = 0;
       this.$data.guessResult = '';
       this.$data.min = 0;
