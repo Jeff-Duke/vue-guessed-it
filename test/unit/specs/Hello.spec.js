@@ -1,11 +1,14 @@
 import Vue from 'vue';
-import HelloWorld from '@/components/HelloWorld';
+import Guesser from '@/components/Guesser';
 
-describe('HelloWorld.vue', () => {
-  it('should render correct contents', () => {
-    const Constructor = Vue.extend(HelloWorld);
-    const vm = new Constructor().$mount();
-    expect(vm.$el.querySelector('.hello h1').textContent)
-      .to.equal('Welcome to Your Vue.js App');
+describe('Guesser', () => {
+  it('has a created hook', () => {
+    expect(typeof Guesser.created).toBe('function');
+  });
+
+  it('has the correct default state', () => {
+    expect(typeof Guesser.data).toBe('function');
+    const defaultState = Guesser.Data();
+    expect(defaultState.level).toBe(1);
   });
 });
