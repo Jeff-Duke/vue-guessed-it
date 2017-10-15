@@ -12,7 +12,6 @@
     <input type="number" v-model="max" v-on:blur="getNewRandom" >{{max}}</input>
     <h3 v-if="guessResult">{{ guessResult }}</h3>
     <h3 v-if="lastGuess">your last guess was: {{lastGuess}} </h3>
-    <h3>{{rando}}</h3>
     <h4>{{userGuess}}</h4>
   </section>
 </template>
@@ -85,7 +84,7 @@ export default {
     },
 
     gameWon: function gameWon() {
-      this.$data.guessResult = 'You Guessed It';
+      this.$data.guessResult = 'You Guessed It, min range decreased, max range increased!';
       this.$data.min -= 10;
       this.$data.max += 10;
       this.$data.level += 1;
