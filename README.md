@@ -1,4 +1,5 @@
-# y
+# Vue-Guessed-It
+A number-guessing game built in Vue.js.  For original spec see [this](http://frontend.turing.io/projects/number-guesser.html)
 
 > number-guesser in vue
 
