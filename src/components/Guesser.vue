@@ -1,6 +1,6 @@
 <template>
   <section class="guesser-container">
-    <h1>{{ msg }}</h1>
+    <h1 class="message">{{ msg }}</h1>
     <h3>Enter a guess between {{min}} and {{max}}</h3>
     <article class="inputs-buttons">
       <input :min="min" :max="max" type="number" v-on:keyup.enter="submitGuess" class="guess-input" placeholder="enter your guess" v-model="userGuess" />
@@ -8,8 +8,10 @@
       <button v-on:click="clearInput" :disabled="!userGuess">clear</button>
       <button v-on:click="resetGame" :disabled="level <= 1">reset</button>
     </article>
-    <input type="number" v-model="min" v-on:blur="getNewRandom" >{{min}}</input>
-    <input type="number" v-model="max" v-on:blur="getNewRandom" >{{max}}</input>
+    <label for="minInput">Min</label>
+    <input id="minInput" type="number" v-model="min" v-on:blur="getNewRandom" />
+    <label for="maxInput">Max</label>
+    <input id="MaxInput" type="number" v-model="max" v-on:blur="getNewRandom" />
     <h3 v-if="guessResult">{{ guessResult }}</h3>
     <h3 v-if="lastGuess">your last guess was: {{lastGuess}} </h3>
     <h4>{{userGuess}}</h4>
