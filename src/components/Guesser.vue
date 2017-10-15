@@ -2,12 +2,12 @@
   <section class="guesser-container">
     <h1>{{ msg }}</h1>
     <h3>Enter a guess between {{min}} and {{max}}</h3>
-    <h3>{{ guessResult }}</h3>
-    <h3>{{ lastGuess}} </h3>
     <article class="inputs-buttons">
-      <input class="guess-input" placeholder="enter your guess" v-model="userGuess"/>
+      <input v-on:keyup.enter="submitGuess" class="guess-input" placeholder="enter your guess" v-model="userGuess"/>
       <button v-on:click="submitGuess">Submit</button>
     </article>
+    <h3 v-if="guessResult" >{{ guessResult }}</h3>
+    <h3 v-if="lastGuess" >your last guess was: {{lastGuess}} </h3>
   </section>
 </template>
 
@@ -42,19 +42,24 @@ export default {
     evaluateGuess: function evaluateGuess(guess) {
       const intGuess = parseInt(guess, 10);
       if (intGuess > this.rando) {
-        this.badGuess(`your guess of ${guess} was too high!`);
+        this.badGuess('high');
       }
       if (intGuess < this.rando) {
-        this.badGuess(`your guess of ${guess} was too low!`);
+        this.badGuess('low');
       }
       if (intGuess === this.rando) {
         this.gameWon();
       }
-      this.$lastGuess = intGuess;
+      this.$data.lastGuess = intGuess;
     },
 
     badGuess: function badGuess(feedback) {
-      this.$data.guessResult = feedback;
+      if (feedback === 'high') {
+        this.$data.guessResult = 'your guess was too high';
+      }
+      if (feedback === 'low') {
+        this.$data.guessResult = 'your guess was too low';
+      }
     },
 
     gameWon: function gameWon() {
