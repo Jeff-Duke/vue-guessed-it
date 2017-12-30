@@ -1,9 +1,13 @@
 <template>
   <section class="guesser-container">
-    <h1 class="message">{{ msg }}</h1>
-    <h3>Enter a guess between {{min}} and {{max}}</h3>
+    <h1 class="message">
+      {{ msg }}
+    </h1>
+    <h3>
+      Enter a guess between {{min}} and {{max}}
+    </h3>
     <article class="inputs-buttons">
-      <input :min="min" :max="max" type="number" v-on:keyup.enter="submitGuess" class="guess-input" placeholder="enter your guess" v-model="userGuess" />
+      <input v-model="userGuess" :min="min" :max="max" type="number" v-on:keyup.enter="submitGuess" class="guess-input" placeholder="enter your guess"  />
       <button id="submitButton" v-on:click="submitGuess" :disabled="!userGuess">Submit</button>
       <button id="clearButton" v-on:click="clearInput" :disabled="!userGuess">clear</button>
       <button id="resetButton" v-on:click="resetGame" :disabled="level <= 1">reset</button>
@@ -33,11 +37,6 @@ export default {
       level: 1,
     };
   },
-  computed: {
-    isResetDisabled() {
-      return this.$data.level === 1;
-    },
-  },
   mounted: function getRandomOnMount() {
     this.getNewRandom();
   },
@@ -47,16 +46,16 @@ export default {
       this.clearInput();
     },
 
-    clearInput: function clearInput() {
+    clearInput() {
       this.$data.userGuess = '';
     },
 
-    getNewRandom: function getRandom() {
+    getRandom() {
       const newRando = Math.round((Math.random() * (this.max - this.min)) + this.min);
       this.$data.rando = newRando;
     },
 
-    evaluateGuess: function evaluateGuess(guess) {
+    evaluateGuess(guess) {
       const intGuess = parseInt(guess, 10);
       if (isNaN(intGuess)) {
         this.badGuess('NaN');
@@ -73,7 +72,7 @@ export default {
       this.$data.lastGuess = intGuess;
     },
 
-    badGuess: function badGuess(feedback) {
+    badGuess(feedback) {
       if (feedback === 'high') {
         this.$data.guessResult = 'your guess was too high';
       }
@@ -85,7 +84,7 @@ export default {
       }
     },
 
-    gameWon: function gameWon() {
+    gameWon() {
       this.$data.guessResult = 'You Guessed It, min range decreased, max range increased!';
       this.$data.min -= 10;
       this.$data.max += 10;
@@ -93,7 +92,7 @@ export default {
       this.getNewRandom();
     },
 
-    resetGame: function resetGame() {
+    resetGame() {
       this.$data.lastGuess = 0;
       this.$data.guessResult = '';
       this.$data.min = 0;
