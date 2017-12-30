@@ -144,7 +144,34 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss">
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,700');
+
+$primary-font: 'Open Sans', sans-serif;
+
+$color-background-dark: #404041;
+$color-primary-pink: #eb008b;
+$color-title-pink: #ed458b;
+$color-active-gray: #929497;
+$color-disabled-gray: #d0d2d3;
+$color-light-gray: #e6e7e8;
+$color-white: #fff;
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: $primary-font;
+  margin: 0;
+}
+
 h1,
 h2 {
   font-weight: normal;
@@ -160,7 +187,123 @@ li {
   margin: 0 10px;
 }
 
-a {
-  color: #42b983;
+.container {
+  max-width: 60vw;
+  margin: 0 auto;
+
+  @media screen and(max-width: 768px) {
+    max-width: 80vw;
+  }
+}
+
+.game-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  padding: 2rem;
+  background-color: $color-background-dark;
+  margin-bottom: 1rem;
+
+  .title {
+    margin: 0;
+    color: $color-title-pink;
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+
+    span {
+      color: $color-light-gray;
+      font-weight: 300;
+    }
+  }
+
+  .range {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: $color-light-gray;
+    text-align: center;
+  }
+}
+
+.guess--output {
+  span {
+    font-size: 10rem;
+    color: $color-primary-pink;
+    font-weight: 300;
+    display: block;
+    line-height: 9rem;
+  }
+}
+
+.guess--output,
+.guess--result {
+  text-align: center;
+  font-size: 1.25rem;
+}
+
+.guess--result {
+  margin-top: 0.5rem;
+}
+
+.input {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+
+  &--guess {
+    width: 100%;
+  }
+
+  &--range {
+    width: 100%;
+  }
+}
+
+.wrapper {
+  display: flex;
+
+  &--range {
+    justify-content: space-between;
+
+    label ~ label {
+      margin-left: 0.5rem;
+    }
+
+    @media screen and (min-width: 768px) {
+      justify-content: center;
+
+      label ~ label {
+        margin-left: 2rem;
+      }
+    }
+  }
+
+  &--buttons {
+    justify-content: space-around;
+
+    .btn {
+      width: 40%;
+    }
+  }
+}
+
+.btn {
+  background-color: $color-active-gray;
+  color: $color-white;
+  border: none;
+  border-radius: 1.25rem;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+
+  &:hover {
+    background-color: $color-primary-pink;
+  }
+
+  &:disabled {
+    background-color: $color-disabled-gray;
+  }
 }
 </style>
