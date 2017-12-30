@@ -1,88 +1,117 @@
 <template>
   <section class="guesser-container">
+    <article class="message">
+      <h1 class="title">
+        Number <span>Guesser</span>
+      </h1>
 
-    <h1 class="message">
-      {{ msg }}
-    </h1>
-
-    <h3>
-      Enter a guess between {{min}} and {{max}}
-    </h3>
-
-    <article class="inputs-buttons">
+      <p class="range">
+        Enter a guess between {{min}} and {{max}}
+      </p>
+    </article>
+    <article class="game-body container">
 
       <input
         v-model="userGuess"
         type="number"
         @keyup.enter="submitGuess"
-        class="guess-input"
+        class="input input--guess"
         placeholder="enter your guess"
+        ref="userGuess"
       />
 
-      <button
-        id="submitButton"
-        @click="submitGuess"
-        :disabled="!userGuess"
+      <div class="wrapper wrapper--range">
+        <label for="minInput">
+          Min
+        <input
+          v-model="min"
+          id="minInput"
+          class="input input--range"
+          type="number"
+          @blur="getNewRandom"
+        />
+        </label>
+
+        <label for="maxInput">
+          Max
+        <input
+          v-model="max"
+          id="maxInput"
+          class="input input--range"
+          type="number"
+          @blur="getNewRandom"
+        />
+        </label>
+      </div>
+
+      <div class="wrapper wrapper--buttons">
+        <button
+          @click="submitGuess"
+          class="btn btn--submit"
+          :disabled="!userGuess"
+        >
+          Submit
+        </button>
+
+        <button
+          @click="clearInput"
+          class="btn btn--clear"
+          :disabled="!userGuess"
+        >
+          Clear
+        </button>
+      </div>
+
+      <article
+        class="guess--output"
+        v-if="lastGuess"
       >
-        Submit
-      </button>
+        Your last guess was
+        <span>{{lastGuess}}</span>
+      </article>
+      <article
+        class="guess--output"
+        v-if="!lastGuess"
+      >
+        <span>??</span>
+      </article>
+
+      <p
+        v-show="guessResult"
+        class="guess--result"
+      >
+        {{ guessResult }}
+      </p>
 
       <button
-        id="clearButton"
-        @click="clearInput"
-        :disabled="!userGuess"
-      >
-        clear
-      </button>
-
-      <button
-        id="resetButton"
         @click="resetGame"
+        class="btn btn--reset"
         :disabled="level <= 1"
       >
-        reset
+        Reset
       </button>
+
     </article>
-
-    <label for="minInput">Min</label>
-    <input
-      v-model="min"
-      id="minInput"
-      type="number"
-      @blur="getNewRandom"
-    />
-
-    <label for="maxInput">Max</label>
-    <input
-      v-model="max"
-      id="maxInput"
-      type="number"
-      @blur="getNewRandom"
-    />
-
-    <h3 v-if="guessResult">{{ guessResult }}</h3>
-    <h3 v-if="lastGuess">your last guess was: {{lastGuess}} </h3>
 
   </section>
 </template>
 
 <script>
-const GUESS_ISNAN = 'Your guess was not a number.  Please enter a number';
-const GUESS_ISHIGH = 'Your guess was too high';
-const GUESS_ISLOW = 'Your guess was too low';
+const GUESS_ISNAN = 'That was not a number.  Please enter a number';
+const GUESS_ISHIGH = 'That was too high';
+const GUESS_ISLOW = 'That was too low';
 
 export default {
   name: 'Guesser',
 
   data() {
     return {
-      msg: 'Welcome to number guesser',
       userGuess: '',
       guessResult: '',
+      lastGuess: 0,
       min: 0,
       max: 100,
       rando: 0,
-      lastGuess: 0,
       level: 1,
     };
   },
@@ -93,8 +122,9 @@ export default {
 
   methods: {
     submitGuess() {
-      this.evaluateGuess(this.userGuess);
+      this.evaluateGuess();
       this.clearInput();
+      this.$refs.userGuess.focus();
     },
 
     clearInput() {
@@ -102,13 +132,24 @@ export default {
     },
 
     getNewRandom() {
+      const max = parseInt(this.max, 10);
+      const min = parseInt(this.min, 10);
+
+      if (min > max) {
+        this.guessResult = 'Please enter a valid range';
+        return null;
+      }
+
       // eslint-disable-next-line
-      const newRando = Math.round(Math.random() * (this.max - this.min) + this.min);
+      const newRando = Math.round(Math.random() * (max - min) + min);
       this.rando = newRando;
+
+      return null;
     },
 
-    evaluateGuess(guess) {
-      const intGuess = parseInt(guess, 10);
+    evaluateGuess() {
+      this.lastGuess = this.userGuess;
+      const intGuess = parseInt(this.userGuess, 10);
       const { rando } = this;
       if (isNaN(intGuess)) {
         this.guessResult = GUESS_ISNAN;
@@ -304,6 +345,10 @@ li {
 
   &:disabled {
     background-color: $color-disabled-gray;
+  }
+
+  &--reset {
+    margin-top: 2rem;
   }
 }
 </style>
