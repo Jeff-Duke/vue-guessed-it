@@ -1,30 +1,79 @@
 <template>
   <section class="guesser-container">
+
     <h1 class="message">
       {{ msg }}
     </h1>
+
     <h3>
       Enter a guess between {{min}} and {{max}}
     </h3>
+
     <article class="inputs-buttons">
-      <input v-model="userGuess" :min="min" :max="max" type="number" v-on:keyup.enter="submitGuess" class="guess-input" placeholder="enter your guess"  />
-      <button id="submitButton" v-on:click="submitGuess" :disabled="!userGuess">Submit</button>
-      <button id="clearButton" v-on:click="clearInput" :disabled="!userGuess">clear</button>
-      <button id="resetButton" v-on:click="resetGame" :disabled="level <= 1">reset</button>
+
+      <input
+        v-model="userGuess"
+        type="number"
+        @keyup.enter="submitGuess"
+        class="guess-input"
+        placeholder="enter your guess"
+      />
+
+      <button
+        id="submitButton"
+        @click="submitGuess"
+        :disabled="!userGuess"
+      >
+        Submit
+      </button>
+
+      <button
+        id="clearButton"
+        @click="clearInput"
+        :disabled="!userGuess"
+      >
+        clear
+      </button>
+
+      <button
+        id="resetButton"
+        @click="resetGame"
+        :disabled="level <= 1"
+      >
+        reset
+      </button>
     </article>
+
     <label for="minInput">Min</label>
-    <input id="minInput" type="number" v-model="min" v-on:blur="getNewRandom" />
+    <input
+      v-model="min"
+      id="minInput"
+      type="number"
+      @blur="getNewRandom"
+    />
+
     <label for="maxInput">Max</label>
-    <input id="maxInput" type="number" v-model="max" v-on:blur="getNewRandom" />
+    <input
+      v-model="max"
+      id="maxInput"
+      type="number"
+      @blur="getNewRandom"
+    />
+
     <h3 v-if="guessResult">{{ guessResult }}</h3>
     <h3 v-if="lastGuess">your last guess was: {{lastGuess}} </h3>
-    <h4>{{userGuess}}</h4>
+
   </section>
 </template>
 
 <script>
+const GUESS_ISNAN = 'Your guess was not a number.  Please enter a number';
+const GUESS_ISHIGH = 'Your guess was too high';
+const GUESS_ISLOW = 'Your guess was too low';
+
 export default {
   name: 'Guesser',
+
   data() {
     return {
       msg: 'Welcome to number guesser',
@@ -37,11 +86,13 @@ export default {
       level: 1,
     };
   },
-  mounted: function getRandomOnMount() {
+
+  mounted() {
     this.getNewRandom();
   },
+
   methods: {
-    submitGuess: function submitGuess() {
+    submitGuess() {
       this.evaluateGuess(this.userGuess);
       this.clearInput();
     },
@@ -50,54 +101,43 @@ export default {
       this.$data.userGuess = '';
     },
 
-    getRandom() {
-      const newRando = Math.round((Math.random() * (this.max - this.min)) + this.min);
-      this.$data.rando = newRando;
+    getNewRandom() {
+      // eslint-disable-next-line
+      const newRando = Math.round(Math.random() * (this.max - this.min) + this.min);
+      this.rando = newRando;
     },
 
     evaluateGuess(guess) {
       const intGuess = parseInt(guess, 10);
+      const { rando } = this;
       if (isNaN(intGuess)) {
-        this.badGuess('NaN');
+        this.guessResult = GUESS_ISNAN;
       }
-      if (intGuess > this.rando) {
-        this.badGuess('high');
+      if (intGuess > rando) {
+        this.guessResult = GUESS_ISHIGH;
       }
-      if (intGuess < this.rando) {
-        this.badGuess('low');
+      if (intGuess < rando) {
+        this.guessResult = GUESS_ISLOW;
       }
-      if (intGuess === this.rando) {
+      if (intGuess === rando) {
         this.gameWon();
-      }
-      this.$data.lastGuess = intGuess;
-    },
-
-    badGuess(feedback) {
-      if (feedback === 'high') {
-        this.$data.guessResult = 'your guess was too high';
-      }
-      if (feedback === 'low') {
-        this.$data.guessResult = 'your guess was too low';
-      }
-      if (feedback === 'NaN') {
-        this.$data.guessResult = 'you did not enter a number!';
       }
     },
 
     gameWon() {
-      this.$data.guessResult = 'You Guessed It, min range decreased, max range increased!';
-      this.$data.min -= 10;
-      this.$data.max += 10;
-      this.$data.level += 1;
+      this.guessResult = 'You Guessed It, min range decreased, max range increased!';
+      this.min -= 10;
+      this.max += 10;
+      this.level += 1;
       this.getNewRandom();
     },
 
     resetGame() {
-      this.$data.lastGuess = 0;
-      this.$data.guessResult = '';
-      this.$data.min = 0;
-      this.$data.max = 100;
-      this.$data.level = 1;
+      this.lastGuess = 0;
+      this.guessResult = '';
+      this.min = 0;
+      this.max = 100;
+      this.level = 1;
     },
   },
 };
